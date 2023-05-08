@@ -1,0 +1,43 @@
+{
+    "HP":"Honors Physics",
+    "APP1":"AP Physics 1",
+    "APP2":"AP Physics 2",
+    "APPC":"AP Physics C",
+    "HC":"Honors Chemistry",
+    "APC":"AP Chemistry",
+    "HB":"Honors Biology",
+    "APB":"AP Biology",
+
+    "APELANG":"AP English Language",
+    "APELIT": "AP English Literature",
+
+    "APS":"AP Statistics",
+    "LINALG":"Linear Algebra",
+    "DE":"Differential Equations",
+    "APCAB":"AP Calculus AB",
+    "APCBC":"AP Calculus BC",
+
+    "APWH":"AP World History",
+    "APEH":"AP European History",
+    "HCPCS":"Honors Colonial and Post-Colonial Studies",
+
+    "LATIN":"Latin",
+    "SPANISH":"Spanish",
+    "FRENCH":"French",
+    "MANDARIN":"Mandarin",
+    
+    "L":"Lunch",
+
+    "APCSA":"AP Computer Science A",
+    "APCSP":"AP Computer Science Principles",
+    "APECON":"AP Economics",
+    "APPSY":"AP Psychology",
+    "APMT":"AP Music Theory",
+    "DP":"Digital Photography",
+    "PJ":"Photojournalism",
+    "AG":"Ancient Greek",
+    "APSEM":"AP Seminar",
+    "BIOTECH":"Biotechnology",
+    "EE":"Empowering Entrepreneurs",
+    "GUITAR":"Guitar"
+}
