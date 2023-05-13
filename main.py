@@ -29,20 +29,10 @@ with st.sidebar:
     if add_own:
         new_name = st.text_input("Your name (ensure this is distinguishable if your data is already on here)")
 
-        c0 = st.selectbox(label="Period 0",options=schedule_data['0'].unique())
-        c1 = st.selectbox(label="Period 1",options=schedule_data['1'].unique())
-        c2 = st.selectbox(label="Period 2",options=schedule_data['2'].unique())
-        c3 = st.selectbox(label="Period 3",options=schedule_data['3'].unique())
-        c4 = st.selectbox(label="Period 4",options=schedule_data['4'].unique())
-        c5 = st.selectbox(label="Period 5",options=schedule_data['5'].unique())
-        c6 = st.selectbox(label="Period 6",options=schedule_data['6'].unique())
-        c7 = st.selectbox(label="Period 7",options=schedule_data['7'].unique())
-        c8 = st.selectbox(label="Period 8",options=schedule_data['8'].unique())
-        
-        schedule_data.loc[new_name] = [c0,c1,c2,c3,c4,c5,c6,c7,c8]
+        schedule_data.loc[new_name] = [st.selectbox(label=f"Period {i}",options=schedule_data[f'{i}'].unique()) for i in range(9)]
         schedule_data = schedule_data.sort_index()
 
-data,matrix = st.tabs(['Data','Matrix'])
+data,matrix,search = st.tabs(['Data','Matrix','Search & Filter'])
 
 with data:
     st.dataframe(schedule_data,use_container_width=True)
@@ -55,11 +45,12 @@ with data:
     <br> **P6 Lunch:** {p6} ({round(p6/(p5+p6),2)}\%)
     """,unsafe_allow_html=True)
 
-    st.write("## Compare Multiple")
+    st.write("## Compare Students")
     selected_list = st.multiselect("Display selected students together:",schedule_data.index)
-
-    selected_students = schedule_data.loc[selected_list]
-    st.dataframe(selected_students,use_container_width=True)
+    
+    if selected_list:
+        selected_students = schedule_data.loc[selected_list]
+        st.dataframe(selected_students,use_container_width=True)
 
 with matrix:
     def color_background(val):
@@ -93,3 +84,42 @@ with matrix:
         st.table(similarity_matrix)
     else:
         st.dataframe(similarity_matrix)
+
+with search:
+    st.write("## Standard Filter")
+    subjects = st.multiselect("Filter students who are in the following classes:",
+                              list(replacement_keys.keys() if abbreviate_class_names else replacement_keys.values()))
+    def highlight_classes(val):
+        if val in subjects:
+            return 'background-color: #ffe599' 
+    if subjects:
+        index_list = [
+            student
+            for student in schedule_data.index
+            if pd.Series(subjects).isin(list(schedule_data.loc[student])).all()
+        ]
+        
+        filtered_students = schedule_data.loc[index_list].style.applymap(highlight_classes)
+        st.dataframe(filtered_students,use_container_width=True)
+    
+    st.write("## Filter by Period")
+    c0, c1, c2, c3, c4, c5, c6, c7, c8 = st.columns(9)
+    columns = [c0,c1,c2,c3,c4,c5,c6,c7,c8]
+    p_filters = [] 
+
+    def column(i):
+        return st.selectbox(label=f"Period {i}",label_visibility="hidden",options=np.insert(schedule_data[f'{i}'].unique(),0,f"{i}"))
+    def column_is_empty(val):
+        return val in (f'{i}' for i in range(9))
+    
+    for i in range(9):
+        with columns[i]:
+            p_filters.append(column(i))
+    if all(not column_is_empty(p_filters[i]) for i in range(9)):
+        p_index_list = [
+            student
+            for student in schedule_data.index
+            if all(schedule_data.loc[student][key] == p_filters[key] or column_is_empty(p_filters[key])
+                   for key in range(9))
+        ]
+        st.dataframe(schedule_data.loc[p_index_list],use_container_width=True)
