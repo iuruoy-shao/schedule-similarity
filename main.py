@@ -76,10 +76,15 @@ with matrix:
     
     similarity_matrix = pd.DataFrame(
         similarity_array,
-        columns=schedule_data.index if show_full_name else [name[0:3] for name in schedule_data.index],
-        index=schedule_data.index if show_full_name else [name[0:5] for name in schedule_data.index]
+        columns=schedule_data.index if show_full_name else [name[0:8] for name in schedule_data.index],
+        index=schedule_data.index if show_full_name else [name[0:6] for name in schedule_data.index]
         ).style.applymap(color_background)
-    similarity_matrix = similarity_matrix.applymap(color_text)
+    similarity_matrix = similarity_matrix.applymap(color_text).set_table_styles(
+    [dict(selector="th",props=[('max-width', '60px')]),
+        dict(selector="th.col_heading",
+                 props=[("writing-mode", "vertical-rl"), 
+                        ('transform', 'rotateZ(-90deg)'),
+                        ])])
     if view_mode:
         st.table(similarity_matrix)
     else:
