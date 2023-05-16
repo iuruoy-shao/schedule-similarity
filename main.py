@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 import json
@@ -54,10 +55,12 @@ with data:
 
 with matrix:
     def color_background(val):
-        color = "#0b5394" if val >= 9 else "#e06666" if val >= 7 else "#f6b26b" if val >= 5 else "#ffe599" if val >= 3 else "#f3f3f3" if val >= 1 else "white"
-        return f'background-color: {color}'
+        if isinstance(val,int):
+            color = "#0b5394" if val >= 9 else "#e06666" if val >= 7 else "#f6b26b" if val >= 5 else "#ffe599" if val >= 3 else "#f3f3f3" if val >= 1 else "white"
+            return f'background-color: {color}'
     def color_text(val):
-        return 'color: white' if val >= 9 else ''
+        if isinstance(val,int):
+            return 'color: white' if val >= 9 else ''
 
     opt1, opt2 = st.columns(2)
     with opt1:
@@ -74,21 +77,24 @@ with matrix:
                         for name2 in schedule_data.index]
                         for name1 in schedule_data.index]
     
-    similarity_matrix = pd.DataFrame(
-        similarity_array,
-        columns=schedule_data.index if show_full_name else [name[0:8] for name in schedule_data.index],
-        index=schedule_data.index if show_full_name else [name[0:6] for name in schedule_data.index]
-        ).style.applymap(color_background)
-    similarity_matrix = similarity_matrix.applymap(color_text).set_table_styles(
-    [dict(selector="th",props=[('max-width', '60px')]),
-        dict(selector="th.col_heading",
-                 props=[("writing-mode", "vertical-rl"), 
-                        ('transform', 'rotateZ(-90deg)'),
-                        ])])
+    hide_table_row_index = """
+            <style>
+            thead tr th:first-child {display:none}
+            thead {display:none}
+            tbody th {display:none}
+            </style>
+            """
+    st.markdown(hide_table_row_index, unsafe_allow_html=True)
+    
+    similarity_matrix = pd.concat([pd.DataFrame([[name if show_full_name else name[:3] for name in schedule_data.index]],index=[1]),
+                                   pd.DataFrame(similarity_array)]).reset_index(drop=True)
+    similarity_matrix.insert(0,'',['']+[name if show_full_name else name[:8] for name in schedule_data.index])
+    matrix_styler = similarity_matrix.style.applymap(color_background).applymap(color_text)
+    
     if view_mode:
-        st.table(similarity_matrix)
+        st.table(matrix_styler)
     else:
-        st.dataframe(similarity_matrix)
+        st.dataframe(matrix_styler,use_container_width=True)
 
 with search:
     st.write("## Standard Filter")
@@ -112,15 +118,18 @@ with search:
     columns = [c0,c1,c2,c3,c4,c5,c6,c7,c8]
     p_filters = [] 
 
-    def column(i):
-        return st.selectbox(label=f"Period {i}",label_visibility="hidden",options=np.insert(schedule_data[f'{i}'].unique(),0,f"{i}"))
     def column_is_empty(val):
-        return val in (f'{i}' for i in range(9))
+        return val in [f'{i}' for i in range(9)]
     
     for i in range(9):
         with columns[i]:
-            p_filters.append(column(i))
-    if all(not column_is_empty(p_filters[i]) for i in range(9)):
+            p_filters.append(st.selectbox(
+                label=f"Period {i}",
+                label_visibility="hidden",
+                options=np.insert(schedule_data[f'{i}'].unique(),0,f"{i}")
+                ))
+            
+    if any(not column_is_empty(p_filters[i]) for i in range(9)):
         p_index_list = [
             student
             for student in schedule_data.index
