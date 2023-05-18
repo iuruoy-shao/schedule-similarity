@@ -41,8 +41,8 @@ with data:
     p6 = schedule_data['6'].value_counts()['L' if abbreviate_class_names else 'Lunch']
 
     st.markdown(f"""
-    **P5 Lunch:** {p5} ({round(p5/(p5+p6),2)}\%)
-    <br> **P6 Lunch:** {p6} ({round(p6/(p5+p6),2)}\%)
+    **P5 Lunch:** {p5} ({round(p5/(p5+p6)*100,2)}\%)
+    <br> **P6 Lunch:** {p6} ({round(p6/(p5+p6)*100,2)}\%)
     """,unsafe_allow_html=True)
 
     st.write("## Compare Students")
