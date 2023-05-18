@@ -124,7 +124,7 @@ with search:
         with columns[i]:
             p_filters.append(st.selectbox(
                 label=f"Period {i}",
-                label_visibility="hidden",
+                label_visibility='hidden',
                 options=np.insert(schedule_data[f'{i}'].unique(),0,f"{i}")
                 ))
             
