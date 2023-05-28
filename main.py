@@ -103,11 +103,13 @@ with search:
                 return ['' for i in range(len(col))]
 
         selected_students = schedule_data.loc[selected_list]
-        shared = len([True for i in range(9) if are_shared(selected_students[str(i)])])
-        selected_students = selected_students.style.apply(highlight_shared)
-        st.dataframe(selected_students,use_container_width=True)
 
-        st.write(f"**Shared classes:** {shared}")
+        if len(selected_list) > 1:
+            shared = len([True for i in range(9) if are_shared(selected_students[str(i)])])
+            selected_students = selected_students.style.apply(highlight_shared)
+        st.dataframe(selected_students,use_container_width=True)
+        if len(selected_list) > 1:
+            st.write(f"**Shared classes:** {shared}")
 
     st.write("## Standard Filter")
     subjects = st.multiselect("Filter students who are in the following classes:",
