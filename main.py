@@ -32,7 +32,7 @@ with st.sidebar:
         schedule_data.loc[new_name] = [st.selectbox(label=f"Period {i}",options=schedule_data[f'{i}'].unique()) for i in range(9)]
         schedule_data = schedule_data.sort_index()
 
-data,matrix,search = st.tabs(['Data','Matrix','Search & Filter'])
+search,matrix,data = st.tabs(['Search & Filter','Matrix','Data'])
 
 with data:
     st.dataframe(schedule_data,use_container_width=True)
@@ -44,13 +44,6 @@ with data:
     **P5 Lunch:** {p5} ({round(p5/(p5+p6)*100,2)}\%)
     <br> **P6 Lunch:** {p6} ({round(p6/(p5+p6)*100,2)}\%)
     """,unsafe_allow_html=True)
-
-    st.write("## Compare Students")
-    selected_list = st.multiselect("Display selected students together:",schedule_data.index)
-    
-    if selected_list:
-        selected_students = schedule_data.loc[selected_list]
-        st.dataframe(selected_students,use_container_width=True)
 
 with matrix:
     def color_background(val):
@@ -96,6 +89,26 @@ with matrix:
         st.dataframe(matrix_styler,use_container_width=True)
 
 with search:
+    st.write("## Compare Students")
+    selected_list = st.multiselect("Display selected students together:",schedule_data.index)
+    
+    if selected_list:
+        def are_shared(period):
+            period_array = period.to_numpy()
+            return (period_array[0] == period_array).all()
+        def highlight_shared(col):
+            if are_shared(col):
+                return ['background-color: #ffe599' for i in range(len(col))]
+            else:
+                return ['' for i in range(len(col))]
+
+        selected_students = schedule_data.loc[selected_list]
+        shared = len([True for i in range(9) if are_shared(selected_students[str(i)])])
+        selected_students = selected_students.style.apply(highlight_shared)
+        st.dataframe(selected_students,use_container_width=True)
+
+        st.write(f"**Shared classes:** {shared}")
+
     st.write("## Standard Filter")
     subjects = st.multiselect("Filter students who are in the following classes:",
                               list(replacement_keys.keys() if abbreviate_class_names else replacement_keys.values()))
