@@ -57,5 +57,5 @@ Displays how many classes each student shares with every other, colored for clar
 2. Store data in SQL server
 3. Expand to different grades/schools
 
-[Streamlit]: https://img.shields.io/badge/Streamlit-000000?style=flat-square&logo=streamlit&logoColor=#FF4B4B
+[Streamlit]: https://img.shields.io/badge/Streamlit-View%20Site-000000?style=flat-square&logo=streamlit&logoColor=#FF4B4B
 [site-url]: https://iuruoy-shao-schedule-similarity-main-sz6k3f.streamlit.app/
