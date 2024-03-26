@@ -1,4 +1,6 @@
 import streamlit as st
+import streamlit_authenticator as stauth
+
 import pandas as pd
 import numpy as np
 import json
@@ -14,10 +16,13 @@ st.markdown("""
 
 with st.sidebar:
     st.write("## Settings")
+    
+    schedule_file_name = f'schedule_data_{st.selectbox("School Year",["2023-24","2024-25"],index=1).replace("20","").replace("-","")}.csv'
 
     abbreviate_class_names = st.checkbox("Use abbreviations",value=True)
+    exclude_fp = st.checkbox("Exclude free periods when counting shared", value=True)
     replacement_keys = json.load(open('text_replacement.json'))
-    schedule_data = pd.read_csv('schedule_data.csv').set_index('Name').fillna("").sort_index()
+    schedule_data = pd.read_csv(schedule_file_name).set_index('Name').fillna("").sort_index()
     if not abbreviate_class_names:
         schedule_data = schedule_data.replace(replacement_keys)
 
@@ -63,9 +68,9 @@ with matrix:
 
     schedule_data = schedule_data.sort_values(by=sorting_by)
 
-    similarity_array = [[np.where(schedule_data.loc[[name1]].reset_index(drop=True)
-                                ==schedule_data.loc[[name2]].reset_index(drop=True),1,0)[0]
-                                .tolist().count(1)
+    similarity_array = [[np.count_nonzero((schedule_data.loc[name1].to_numpy()
+                          ==schedule_data.loc[name2].to_numpy())
+                          & (schedule_data.loc[name1].to_numpy(dtype=bool) | (not exclude_fp)))
                         for name2 in schedule_data.index]
                         for name1 in schedule_data.index]
     
@@ -95,7 +100,7 @@ with search:
     if selected_list:
         def are_shared(period):
             period_array = period.to_numpy()
-            return (period_array[0] == period_array).all()
+            return (period_array[0] == period_array).all() and (period_array[0] or (not exclude_fp))
         def highlight_shared(col):
             if are_shared(col):
                 return ['background-color: #ffe599' for i in range(len(col))]
