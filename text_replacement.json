@@ -14,9 +14,13 @@
     "APS":"AP Statistics",
     "LINALG":"Linear Algebra",
     "DE":"Differential Equations",
+    "MULTIVAR":"Multivariable Calculus",
     "APCAB":"AP Calculus AB",
     "APCBC":"AP Calculus BC",
     "GT":"Game Theory",
+    "GTBE":"Game Theory and Behavioral Economics",
+    "CORPFIN":"Corporate Finance",
+    "ECONMET":"Econometrics",
 
     "APWH":"AP World History",
     "APEH":"AP European History",
@@ -41,5 +45,22 @@
     "BIOTECH":"Biotechnology",
     "EE":"Empowering Entrepreneurs",
     "GUITAR":"Guitar",
-    "PIANO":"Piano"
+    "PIANO":"Piano",
+
+    "CCDIAZ":"Diaz College Counseling",
+    "CCFILIOS":"Filios College Counseling",
+    "CCMCOLLUM":"McCollum College Counseling",
+
+    "LING":"Introduction to Linguistics",
+    "EXABS":"Existentialism and the Absurd",
+    "RHETCOM":"Rhetoric and Communications",
+    "PSYCHHM":"Psychology of Happiness and Mindreading",
+    "AOV":"Anatomy of Violence",
+    "MVFIC":"Multiversal Fiction",
+
+    "INDCHEM":"Industrial Chemistry",
+    "JAVAML":"Advanced Java Topics and Machine Learning",
+    "DEVGEN":"Developmental Genetics",
+    "NEURO":"Neuroscience",
+    "MOPHY":"Topics in Modern Physics"
 }
