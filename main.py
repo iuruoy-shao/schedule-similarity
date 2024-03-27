@@ -52,11 +52,24 @@ with data:
 with matrix:
     def color_background(val):
         if isinstance(val,int):
-            color = "#0b5394" if val >= 9 else "#e06666" if val >= 7 else "#f6b26b" if val >= 5 else "#ffe599" if val >= 3 else "#f3f3f3" if val >= 1 else "white"
+            if not exclude_fp:
+                color = ("#0b5394" if val >= 9 
+                        else "#e06666" if val >= 7 
+                        else "#f6b26b" if val >= 5 
+                        else "#ffe599" if val >= 3 
+                        else "#f3f3f3" if val >= 1 
+                        else "white")
+            else:
+                color = ("#0b5394" if val >= 6 
+                        else "#e06666" if val >= 5 
+                        else "#f6b26b" if val >= 4 
+                        else "#ffe599" if val >= 2 
+                        else "#f3f3f3" if val >= 1 
+                        else "white")
             return f'background-color: {color}'
     def color_text(val):
         if isinstance(val,int):
-            return 'color: white' if val >= 9 else ''
+            return 'color: white' if val >= 9 - 3 * (exclude_fp) else ''
 
     opt1, opt2 = st.columns(2)
     with opt1:
